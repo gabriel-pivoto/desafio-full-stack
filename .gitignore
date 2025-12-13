@@ -1,0 +1,44 @@
+# Node / PNPM / NPM
+node_modules/
+pnpm-lock.yaml
+npm-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.turbo/
+.next/
+
+# Coverage / Reports
+coverage/
+*.lcov
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs / OS
+*.log
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+
+# Editors / IDE
+.vscode/
+.idea/
+
+# Frontend specific
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Backend specific
+backend/node_modules/
+backend/dist/
+backend/.turbo/
+backend/.cache/
