@@ -62,6 +62,18 @@ Aplicação composta por uma API NestJS em `backend/` e um cliente React/Vite em
    docker compose down
    ```
 
+## Execução do backend e banco via Docker Dev
+
+1. Utilize o arquivo dedicado `docker.dev.yml` quando precisar levantar apenas o backend e o PostgreSQL:
+   ```bash
+   docker compose -f docker.dev.yml up --build
+   ```
+2. Essa stack expõe o backend em `http://localhost:3000/api` e deixa o PostgreSQL ouvindo em `localhost:5432`.
+3. Para parar e limpar essa configuração:
+   ```bash
+   docker compose -f docker.dev.yml down
+   ```
+
 ## Scripts úteis
 
 ### Backend (`backend/package.json`)
@@ -105,4 +117,3 @@ desafio-full-stack/
 * Erros de domínio (ex: geometria inválida) resultam em `400` com mensagens claras.
 * Os dados persistem em PostgreSQL com o campo `geometry` armazenando JSON, então a leitura é simples no banco.
 * As migrations rodam automaticamente ao iniciar a aplicação, evitando erros “relation does not exist”.
-
