@@ -5,12 +5,13 @@ Aplicação composta por uma API NestJS em `backend/` e um cliente React/Vite em
 ## Conteúdo
 
 1. [Requisitos](#requisitos)  
-2. [Configuração local (sem Docker)](#configuração-local-sem-docker)  
-3. [Execução com Docker](#execução-com-docker)  
-4. [Scripts úteis](#scripts-úteis)  
-5. [Endpoints disponíveis](#endpoints-disponíveis)  
-6. [Estrutura do repositório](#estrutura-do-repositório)  
-7. [Avisos e validações](#avisos-e-validações)
+2. [Configuração inicial](#configuracao-inicial)  
+3. [Execução com Docker](#execucao-com-docker)  
+4. [Execução do backend e banco via Docker Dev](#execucao-do-backend-e-banco-via-docker-dev)  
+5. [Scripts úteis](#scripts-uteis)  
+6. [Endpoints disponíveis](#endpoints-disponiveis)  
+7. [Estrutura do repositório](#estrutura-do-repositorio)  
+8. [Avisos e validações](#avisos-e-validacoes)
 
 ## Requisitos
 
@@ -59,7 +60,7 @@ Aplicação composta por uma API NestJS em `backend/` e um cliente React/Vite em
    ```bash
    cd frontend
    npm install
-   npm run dev
+   npm start
    ```
    O cliente Vite usa `VITE_API_URL` (padrão `http://localhost:3000/api`) para se conectar à API Dockerizada.
 4. Para parar e limpar essa configuração do backend:
