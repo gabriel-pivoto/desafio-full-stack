@@ -8,6 +8,9 @@ type Props = {
 };
 
 export function Sidebar({ filter, onFilterChange, zones, onNewZone }: Props) {
+  const sortedZones = [...zones].sort((a, b) =>
+    a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }),
+  );
   return (
     <aside className="sidebar">
       <div className="filter">
@@ -25,24 +28,26 @@ export function Sidebar({ filter, onFilterChange, zones, onNewZone }: Props) {
       </button>
 
       <div className="zones-list">
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {zones.map((zone) => (
-              <tr key={zone.id}>
-                <td>{zone.name}</td>
-                <td>
-                  <span className={`pill ${zone.type}`}>{zone.type.toLowerCase()}</span>
-                </td>
+        <div className="zones-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sortedZones.map((zone) => (
+                <tr key={zone.id}>
+                  <td>{zone.name}</td>
+                  <td>
+                    <span className={`pill ${zone.type}`}>{zone.type.toLowerCase()}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </aside>
   );
