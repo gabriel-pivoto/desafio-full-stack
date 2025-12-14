@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   CircleMarker,
   FeatureGroup,
@@ -180,9 +180,63 @@ export function MapView({
     return null;
   };
 
+  const mapWrapperRef = useRef<HTMLDivElement | null>(null);
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
+
+  const syncToolbarTopOffset = () => {
+    const toolbarEl = toolbarRef.current;
+    const wrapperEl = mapWrapperRef.current;
+    if (!toolbarEl || !wrapperEl) return;
+    const mapContainer = wrapperEl.querySelector<HTMLDivElement>('.leaflet-container');
+    const rightToolbar = wrapperEl.querySelector<HTMLDivElement>('.leaflet-top.leaflet-right');
+    const baseTop = 12;
+    if (mapContainer && rightToolbar) {
+      const mapRect = mapContainer.getBoundingClientRect();
+      const rightRect = rightToolbar.getBoundingClientRect();
+      const offset = Math.max(0, rightRect.top - mapRect.top);
+      toolbarEl.style.top = `${offset}px`;
+      return;
+    }
+    toolbarEl.style.top = `${baseTop}px`;
+  };
+
+  useEffect(() => {
+    const wrapperEl = mapWrapperRef.current;
+    if (!wrapperEl) return undefined;
+
+    let rafId: number | null = null;
+    const ensureSync = () => {
+      syncToolbarTopOffset();
+      const rightToolbar = wrapperEl.querySelector('.leaflet-top.leaflet-right');
+      if (!rightToolbar) {
+        rafId = requestAnimationFrame(ensureSync);
+      }
+    };
+    ensureSync();
+
+    const resizeHandler = () => syncToolbarTopOffset();
+    window.addEventListener('resize', resizeHandler);
+
+    const mapContainer = wrapperEl.querySelector('.leaflet-container');
+    const observer = mapContainer
+      ? new MutationObserver(() => syncToolbarTopOffset())
+      : null;
+    if (observer && mapContainer) {
+      observer.observe(mapContainer, { childList: true, subtree: true });
+    }
+
+    return () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      observer?.disconnect();
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
   return (
-    <div className="map-wrapper">
-      <div className="map-toolbar">
+    <div className="map-wrapper" ref={mapWrapperRef}>
+      <div className="map-toolbar" ref={toolbarRef}>
         <button
           className="button secondary"
           onClick={() => setDrawMode('point')}
