@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import { FormEvent, useEffect, useState } from 'react';
 import { GeoJSONGeometry, ZoneType } from '../../../domain/zones/models';
 import { ErrorBanner } from '../feedback/ErrorBanner';
@@ -42,7 +41,6 @@ export function ZoneFormModal({
 
   if (!open) return null;
 
-  /* istanbul ignore next */
   const geometryLabel = geometry
     ? `${geometry.type === 'Polygon' && drawMode === 'circle' ? 'Circle' : geometry.type} ${
         geometry.type === 'Point' && drawMode === 'point' ? '(via clique)' : '(via desenho)'

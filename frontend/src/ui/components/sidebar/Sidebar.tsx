@@ -32,6 +32,9 @@ export function Sidebar({ filter, onFilterChange, zones, onNewZone }: Props) {
       <section className="sidebar-section">
         <h3>Filtro</h3>
         <div className="filter">
+          <label htmlFor="filter" className="sr-only">
+            Filtro por nome
+          </label>
           <input
             id="filter"
             type="text"
@@ -68,9 +71,9 @@ export function Sidebar({ filter, onFilterChange, zones, onNewZone }: Props) {
                 <span
                   className="zone-type"
                   style={{
-                    background: withAlpha(zoneColors[zone.type] ?? '#0ea5e9', 0.15),
-                    color: zoneColors[zone.type] ?? '#0ea5e9',
-                    boxShadow: `inset 0 0 0 1px ${withAlpha(zoneColors[zone.type] ?? '#0ea5e9', 0.4)}`,
+                    background: withAlpha(zoneColors[zone.type], 0.15),
+                    color: zoneColors[zone.type],
+                    boxShadow: `inset 0 0 0 1px ${withAlpha(zoneColors[zone.type], 0.4)}`,
                   }}
                   title={zone.type.toLowerCase()}
                 >

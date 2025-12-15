@@ -146,6 +146,12 @@ describe('App', () => {
     await waitFor(() => expect(listZonesMock).toHaveBeenCalledTimes(1));
     expect(listZonesMock).toHaveBeenLastCalledWith('park');
     expect(screen.getByTestId('selected-geometry').textContent).toBe('none');
+
+    vi.useFakeTimers();
+    await act(() => {
+      vi.advanceTimersByTime(2800);
+    });
+    vi.useRealTimers();
   });
 
   it('handles loadZones errors and recovers on next fetch', async () => {

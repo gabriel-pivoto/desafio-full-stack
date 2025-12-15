@@ -18,6 +18,7 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { GeoJSONGeometry, Zone } from '../../../domain/zones/models';
 import { zoneColors } from '../../../domain/zones/colors';
 import { circleToPolygon, isPolygon } from '../../../domain/zones/geojson';
+import type { LatLngExpression } from 'leaflet';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -54,6 +55,10 @@ function ClickHandler({
   return null;
 }
 
+function toLatLngSequence(ring: number[][]): LatLngExpression[] {
+  return ring.map(([lng, lat]) => [lat, lng]) as LatLngExpression[];
+}
+
 export function MapView({
   zones,
   selectedGeometry,
@@ -84,10 +89,7 @@ export function MapView({
     } else if (drawMode === 'circle' && e.layerType === 'circle') {
       const circleLayer = e.layer as L.Circle;
       const geometry = circleToPolygon(circleLayer.getLatLng(), circleLayer.getRadius(), 48);
-      const polygonPositions = geometry.coordinates[0].map(([lng, lat]) => [lat, lng]) as [
-        number,
-        number,
-      ][];
+      const polygonPositions = toLatLngSequence(geometry.coordinates[0]);
       const polygonLayer = L.polygon(polygonPositions);
       drawnItems.current?.clearLayers();
       drawnItems.current?.addLayer(polygonLayer);
@@ -134,9 +136,7 @@ export function MapView({
     }
     if (isPolygon(zone.geometry)) {
       const color = zoneColors[zone.type] || '#0ea5e9';
-      const positions = zone.geometry.coordinates.map((ring) =>
-        ring.map(([lng, lat]) => [lat, lng]),
-      );
+      const positions = zone.geometry.coordinates.map((ring) => toLatLngSequence(ring));
       return (
         <Polygon
           key={zone.id}
@@ -161,9 +161,7 @@ export function MapView({
       );
     }
     if (isPolygon(selectedGeometry)) {
-      const positions = selectedGeometry.coordinates.map((ring) =>
-        ring.map(([lng, lat]) => [lat, lng]),
-      );
+      const positions = selectedGeometry.coordinates.map((ring) => toLatLngSequence(ring));
       return (
         <Polygon
           positions={positions}
@@ -238,10 +236,7 @@ export function MapView({
               polygon: drawMode === 'polygon',
             }}
             edit={{
-              edit:
-                drawMode === 'polygon'
-                  ? { selectedPathOptions: { maintainColor: true } }
-                  : false,
+              edit: drawMode === 'polygon' ? {} : false,
               remove: drawMode !== 'point',
             }}
           />

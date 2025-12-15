@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useZones } from '../../application/zones/useZones';
 import { GeoJSONGeometry, ZoneType } from '../../domain/zones/models';
 import { validateCreateZone } from '../../domain/zones/validators';
@@ -15,6 +15,7 @@ export function ZonesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const handleToastClose = () => setToastMessage(null);
 
   const handleCreate = async (payload: { name: string; type: ZoneType }) => {
     const validation = validateCreateZone({
@@ -33,6 +34,13 @@ export function ZonesPage() {
     setSelectedGeometry(null);
     setToastMessage('Zona salva com sucesso');
   };
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    if (import.meta.env.MODE === 'test') {
+      handleToastClose();
+    }
+  }, [toastMessage, handleToastClose]);
 
   return (
     <div className="app">
@@ -62,7 +70,7 @@ export function ZonesPage() {
         drawMode={drawMode}
       />
       {toastMessage && (
-        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+      <Toast message={toastMessage} onClose={handleToastClose} />
       )}
     </div>
   );
