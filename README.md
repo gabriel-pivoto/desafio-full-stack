@@ -99,8 +99,8 @@ O payload de criação aceita geometria GeoJSON típica (`Point` ou `Polygon`), 
 
 ```
 desafio-full-stack/
-├ backend/          # API NestJS com TypeORM e migrations (veja backend-architecture.md)
-├ frontend/         # SPA React + Vite + Leaflet (veja frontend-architecture.md)
+├ backend/          # API NestJS com TypeORM e migrations 
+├ frontend/         # SPA React + Vite + Leaflet 
 ├ docker-compose.yml# stack local para banco + backend + frontend
 └ .env(.example)    # configurações de ambiente (API e VITE_API_URL)
 ```
