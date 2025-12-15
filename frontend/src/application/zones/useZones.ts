@@ -56,11 +56,15 @@ export function useZones(): UseZonesState {
       return;
     }
 
+    if (creating) {
+      return;
+    }
+
     const handle = setTimeout(() => {
       load(trimmedFilter || undefined);
     }, 350);
     return () => clearTimeout(handle);
-  }, [trimmedFilter, load]);
+  }, [trimmedFilter, load, creating]);
 
   const reload = useCallback(() => load(trimmedFilter || undefined), [load, trimmedFilter]);
 

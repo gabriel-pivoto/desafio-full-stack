@@ -50,8 +50,8 @@ export function ZonesPage() {
         zones={zones}
         onNewZone={() => setModalOpen(true)}
       />
-      <div style={{ flex: 1 }}>
-        {loading && <div style={{ padding: '0.5rem 1rem' }}>Carregando zonas...</div>}
+      <main className="map-area">
+        {loading && <div className="status">Carregando zonas...</div>}
         {error && <ErrorBanner message={error} />}
         <MapView
           zones={zones}
@@ -60,7 +60,7 @@ export function ZonesPage() {
           drawMode={drawMode}
           setDrawMode={setDrawMode}
         />
-      </div>
+      </main>
       <ZoneFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
