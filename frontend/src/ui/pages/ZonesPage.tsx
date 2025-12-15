@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { useZones } from '../../application/zones/useZones';
 import { GeoJSONGeometry, ZoneType } from '../../domain/zones/models';
 import { validateCreateZone } from '../../domain/zones/validators';
-import { MapView } from '../components/map/MapView';
+import { MapView, DrawMode } from '../components/map/MapView';
 import { Sidebar } from '../components/sidebar/Sidebar';
 import { ZoneFormModal } from '../components/form/ZoneFormModal';
 import { ErrorBanner } from '../components/feedback/ErrorBanner';
-
-type DrawMode = 'point' | 'polygon' | 'circle';
+import { Toast } from '../components/feedback/Toast';
 
 export function ZonesPage() {
   const { zones, loading, error, filterName, setFilterName, create } = useZones();
@@ -15,6 +14,7 @@ export function ZonesPage() {
   const [drawMode, setDrawMode] = useState<DrawMode>('point');
   const [modalOpen, setModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleCreate = async (payload: { name: string; type: ZoneType }) => {
     const validation = validateCreateZone({
@@ -31,6 +31,7 @@ export function ZonesPage() {
     setSubmitError(null);
     await create(validation.value);
     setSelectedGeometry(null);
+    setToastMessage('Zona salva com sucesso');
   };
 
   return (
@@ -58,7 +59,11 @@ export function ZonesPage() {
         onSubmit={handleCreate}
         geometry={selectedGeometry}
         errorMessage={submitError}
+        drawMode={drawMode}
       />
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+      )}
     </div>
   );
 }

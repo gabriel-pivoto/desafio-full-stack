@@ -9,7 +9,13 @@ const pointGeometry = { type: 'Point' as const, coordinates: [1, 2] as [number, 
 describe('ZoneFormModal', () => {
   it('returns null when closed', () => {
     const { container } = render(
-      <ZoneFormModal open={false} onClose={vi.fn()} onSubmit={vi.fn()} geometry={null} />,
+    <ZoneFormModal
+      open={false}
+      onClose={vi.fn()}
+      onSubmit={vi.fn()}
+      geometry={null}
+      drawMode="point"
+    />,
     );
 
     expect(container.firstChild).toBeNull();
@@ -17,7 +23,9 @@ describe('ZoneFormModal', () => {
 
   it('validates required fields', async () => {
     const onSubmit = vi.fn().mockRejectedValue(new Error('Preencha nome, tipo e selecione uma geometria no mapa.'));
-    render(<ZoneFormModal open onClose={vi.fn()} onSubmit={onSubmit} geometry={null} />);
+    render(
+      <ZoneFormModal open onClose={vi.fn()} onSubmit={onSubmit} geometry={null} drawMode="point" />,
+    );
 
     await act(async () => {
       fireEvent.submit(screen.getByRole('button', { name: /Salvar/i }));
@@ -41,10 +49,36 @@ describe('ZoneFormModal', () => {
     };
 
     render(
-      <ZoneFormModal open onClose={vi.fn()} onSubmit={vi.fn()} geometry={polygon as any} />,
+      <ZoneFormModal
+        open
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+        geometry={polygon as any}
+        drawMode="polygon"
+      />,
     );
 
     expect(screen.getByText(/Polygon \(via desenho\)/i)).toBeInTheDocument();
+  });
+
+  it('renders circle status when draw mode is circle', () => {
+    const circle = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 0],
+        ],
+      ],
+    };
+
+    render(
+      <ZoneFormModal open onClose={vi.fn()} onSubmit={vi.fn()} geometry={circle as any} drawMode="circle" />,
+    );
+
+    expect(screen.getByText(/Circle \(via desenho\)/i)).toBeInTheDocument();
   });
 
   it('shows error message passed via props', () => {
@@ -55,6 +89,7 @@ describe('ZoneFormModal', () => {
         onSubmit={vi.fn()}
         geometry={pointGeometry}
         errorMessage="Erro externo"
+        drawMode="point"
       />,
     );
 
@@ -66,7 +101,13 @@ describe('ZoneFormModal', () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
     render(
-      <ZoneFormModal open onClose={onClose} onSubmit={onSubmit} geometry={pointGeometry} />,
+      <ZoneFormModal
+        open
+        onClose={onClose}
+        onSubmit={onSubmit}
+        geometry={pointGeometry}
+        drawMode="point"
+      />,
     );
 
     await userEvent.type(screen.getByLabelText('Nome'), 'Test Zone');
@@ -87,7 +128,13 @@ describe('ZoneFormModal', () => {
     const onSubmit = vi.fn().mockRejectedValue(new Error(''));
 
     render(
-      <ZoneFormModal open onClose={vi.fn()} onSubmit={onSubmit} geometry={pointGeometry} />,
+      <ZoneFormModal
+        open
+        onClose={vi.fn()}
+        onSubmit={onSubmit}
+        geometry={pointGeometry}
+        drawMode="point"
+      />,
     );
 
     await userEvent.type(screen.getByLabelText('Nome'), 'Broken');

@@ -2,6 +2,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { GeoJSONGeometry, ZoneType } from '../../../domain/zones/models';
 import { ErrorBanner } from '../feedback/ErrorBanner';
+import type { DrawMode } from '../map/MapView';
 
 type Props = {
   open: boolean;
@@ -9,9 +10,17 @@ type Props = {
   onSubmit: (payload: { name: string; type: ZoneType }) => Promise<void>;
   geometry: GeoJSONGeometry | null;
   errorMessage?: string | null;
+  drawMode: DrawMode;
 };
 
-export function ZoneFormModal({ open, onClose, onSubmit, geometry, errorMessage }: Props) {
+export function ZoneFormModal({
+  open,
+  onClose,
+  onSubmit,
+  geometry,
+  errorMessage,
+  drawMode,
+}: Props) {
   const [name, setName] = useState('');
   const [type, setType] = useState<ZoneType>(ZoneType.RESIDENTIAL);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +44,9 @@ export function ZoneFormModal({ open, onClose, onSubmit, geometry, errorMessage 
 
   /* istanbul ignore next */
   const geometryLabel = geometry
-    ? `${geometry.type} ${geometry.type === 'Point' ? '(via clique)' : '(via desenho)'}`
+    ? `${geometry.type === 'Polygon' && drawMode === 'circle' ? 'Circle' : geometry.type} ${
+        geometry.type === 'Point' && drawMode === 'point' ? '(via clique)' : '(via desenho)'
+      }`
     : 'Nenhuma. Clique ou desenhe no mapa.';
 
   const handleSubmit = async (e: FormEvent) => {
@@ -84,7 +95,12 @@ export function ZoneFormModal({ open, onClose, onSubmit, geometry, errorMessage 
             <button type="button" className="button secondary" onClick={onClose} disabled={loading}>
               Cancelar
             </button>
-            <button className="button" type="submit" disabled={loading}>
+            <button
+              className={`button${loading ? ' loading' : ''}`}
+              type="submit"
+              disabled={loading}
+            >
+              {loading && <span className="spinner" aria-hidden="true" />}
               {loading ? 'Salvando...' : 'Salvar'}
             </button>
           </div>

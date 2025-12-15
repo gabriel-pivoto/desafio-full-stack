@@ -15,7 +15,8 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { GeoJSONGeometry, Zone, ZoneType } from '../../../domain/zones/models';
+import { GeoJSONGeometry, Zone } from '../../../domain/zones/models';
+import { zoneColors } from '../../../domain/zones/colors';
 import { circleToPolygon, isPolygon } from '../../../domain/zones/geojson';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -25,7 +26,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-type DrawMode = 'point' | 'polygon' | 'circle';
+export type DrawMode = 'point' | 'polygon' | 'circle';
 
 type Props = {
   zones: Zone[];
@@ -33,13 +34,6 @@ type Props = {
   onGeometryChange: (geom: GeoJSONGeometry | null) => void;
   drawMode: DrawMode;
   setDrawMode: (mode: DrawMode) => void;
-};
-
-const zoneColors: Record<ZoneType, string> = {
-  RESIDENTIAL: '#0ea5e9',
-  COMMERCIAL: '#7c3aed',
-  INDUSTRIAL: '#d97706',
-  MIXED: '#16a34a',
 };
 
 function ClickHandler({
@@ -161,7 +155,7 @@ export function MapView({
       return (
         <CircleMarker
           center={[lat, lng]}
-          pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.9 }}
+          pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.8 }}
           radius={8}
         />
       );
@@ -173,39 +167,57 @@ export function MapView({
       return (
         <Polygon
           positions={positions}
-          pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.3, weight: 2 }}
+          pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.25, weight: 2 }}
         />
       );
     }
     return null;
   };
 
+  const drawTips: Record<DrawMode, string> = {
+    point: 'Clique no mapa para adicionar um ponto',
+    polygon: 'Clique no ícone do canto superior direito para começar a desenhar os vértices, duplo clique fecha o polígono',
+    circle: 'Clique no ícone do canto superior direito para definir o centro e arraste para o raio',
+  };
+
+  const mapModeClass =
+    drawMode === 'polygon' ? 'polygons-mode' : drawMode === 'circle' ? 'circles-mode' : '';
+
   return (
     <div className="map-wrapper">
       <div className="map-toolbar">
-        <button
-          className="button secondary"
-          onClick={() => setDrawMode('point')}
-          style={{ border: drawMode === 'point' ? '2px solid #0ea5e9' : 'none' }}
-        >
-          Point
-        </button>
-        <button
-          className="button secondary"
-          onClick={() => setDrawMode('polygon')}
-          style={{ border: drawMode === 'polygon' ? '2px solid #0ea5e9' : 'none' }}
-        >
-          Polygon
-        </button>
-        <button
-          className="button secondary"
-          onClick={() => setDrawMode('circle')}
-          style={{ border: drawMode === 'circle' ? '2px solid #0ea5e9' : 'none' }}
-        >
-          Circle
-        </button>
+        <div className="segmented-control">
+          <button
+            type="button"
+            className={drawMode === 'point' ? 'active' : ''}
+            onClick={() => setDrawMode('point')}
+          >
+            Point
+          </button>
+          <button
+            type="button"
+            className={drawMode === 'polygon' ? 'active' : ''}
+            onClick={() => setDrawMode('polygon')}
+          >
+            Polygon
+          </button>
+          <button
+            type="button"
+            className={drawMode === 'circle' ? 'active' : ''}
+            onClick={() => setDrawMode('circle')}
+          >
+            Circle
+          </button>
+        </div>
+        <div className="map-tip">{drawTips[drawMode]}</div>
       </div>
-      <MapContainer center={centerLatLng} zoom={12} scrollWheelZoom className="map" zoomControl={false}>
+      <MapContainer
+        center={centerLatLng}
+        zoom={12}
+        scrollWheelZoom
+        className={`map ${mapModeClass}`}
+        zoomControl={false}
+      >
         <TileLayer
           attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
