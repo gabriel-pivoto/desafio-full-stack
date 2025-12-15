@@ -242,13 +242,8 @@ body {
   width: max-content;
 }
 
-/* ==============================
-   Segmented control (CORRIGIDO)
-   - Sem linha sobrando no Circle
-   - Sem “espacinho” no canto direito
-   ============================== */
 .segmented-control {
-  display: flex; /* importantíssimo */
+  display: flex;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -256,7 +251,7 @@ body {
 }
 
 .segmented-control button {
-  flex: 1; /* ocupa tudo igualmente */
+  flex: 1;
   border: 0;
   background: transparent;
   padding: 0.4rem 0.9rem;
@@ -266,7 +261,6 @@ body {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* divisória entre botões (no próximo) */
 .segmented-control button + button {
   border-left: 1px solid var(--color-border);
 }
@@ -274,25 +268,21 @@ body {
 .segmented-control button.active {
   background: var(--color-primary);
   color: #fff;
-}
-
-/* remove divisórias coladas no ativo (dos dois lados) */
-.segmented-control button.active {
   border-left-color: transparent;
 }
+
 .segmented-control button.active + button {
   border-left-color: transparent;
 }
 
-/* cantos arredondados no ativo */
 .segmented-control button:first-child.active {
   border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
+
 .segmented-control button:last-child.active {
   border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-  margin-right: -1px; /* remove o “espacinho” do canto direito */
+  margin-right: -1px;
 }
-/* ============================== */
 
 .map-tip {
   font-size: 0.8rem;
